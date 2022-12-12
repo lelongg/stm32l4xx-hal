@@ -4,10 +4,10 @@ use core::marker::PhantomData;
 use core::mem;
 
 use crate::hal;
-use crate::stm32::{TIM1, TIM15, TIM2};
+use crate::stm32::{TIM1, TIM15, TIM16, TIM2};
 
 use crate::gpio::gpioa::{PA0, PA1, PA10, PA11, PA15, PA2, PA3, PA8, PA9};
-use crate::gpio::gpiob::{PB10, PB11, PB14, PB3};
+use crate::gpio::gpiob::{PB10, PB11, PB14, PB3, PB8};
 use crate::gpio::Alternate;
 use crate::rcc::{Clocks, Enable, Reset, APB1R1, APB2};
 use crate::time::Hertz;
@@ -101,6 +101,7 @@ pins_to_channels_mapping! {
     // TIM15: (PB14, PA3), (C1, C2), (14, 14);
     // TIM15: (PA2, PB15), (C1, C2), (14, 14);
     // TIM15: (PA2, PA3), (C1, C2), (14, 14);
+    TIM16: (PB8), (C1), (14);
 }
 
 pub trait PwmExt1: Sized {
@@ -136,6 +137,15 @@ impl PwmExt1 for TIM15 {
         PINS: Pins<Self>,
     {
         tim15(self, _pins, freq, clocks, apb)
+    }
+}
+
+impl PwmExt1 for TIM16 {
+    fn pwm<PINS>(self, _pins: PINS, freq: Hertz, clocks: Clocks, apb: &mut APB2) -> PINS::Channels
+    where
+        PINS: Pins<Self>,
+    {
+        tim16(self, _pins, freq, clocks, apb)
     }
 }
 
@@ -397,4 +407,5 @@ standard_timer! {
 
 small_timer! {
     TIM15: (tim15, APB2, u16, u16),
+    TIM16: (tim16, APB2, u16, u16),
 }
