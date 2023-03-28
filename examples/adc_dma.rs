@@ -4,10 +4,9 @@
 use panic_rtt_target as _;
 use rtt_target::{rprintln, rtt_init_print};
 use stm32l4xx_hal::{
-    adc::{Adc, AdcCommon, DmaMode, SampleTime, Sequence},
+    adc::{DmaMode, SampleTime, Sequence, ADC},
     delay::DelayCM,
     dma::{dma1, RxDma, Transfer, W},
-    pac::ADC1,
     prelude::*,
 };
 
@@ -20,7 +19,7 @@ const APP: () = {
     // RTIC app is written in here!
 
     struct Resources {
-        transfer: Option<Transfer<W, &'static mut [u16; SEQUENCE_LEN], RxDma<Adc<ADC1>, dma1::C1>>>,
+        transfer: Option<Transfer<W, &'static mut [u16; SEQUENCE_LEN], RxDma<ADC, dma1::C1>>>,
     }
 
     #[init]
@@ -55,10 +54,15 @@ const APP: () = {
 
         let mut delay = DelayCM::new(clocks);
 
-        let adc_common = AdcCommon::new(pac.ADC_COMMON, &mut rcc.ahb2);
-        let mut adc = Adc::adc1(pac.ADC1, adc_common, &mut rcc.ccipr, &mut delay);
+        let mut adc = ADC::new(
+            pac.ADC1,
+            pac.ADC_COMMON,
+            &mut rcc.ahb2,
+            &mut rcc.ccipr,
+            &mut delay,
+        );
 
-        let mut temp_pin = adc.enable_temperature(&mut delay).unwrap();
+        let mut temp_pin = adc.enable_temperature(&mut delay);
 
         let dma1_channel = dma_channels.1;
 

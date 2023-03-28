@@ -151,7 +151,7 @@ bus! {
     feature = "stm32l4s9",
 )))]
 bus! {
-    ADC_COMMON => (AHB2, adcen, adcfssmen, adcrst), // 13
+    ADC1 => (AHB2, adcen, adcfssmen, adcrst), // 13
 
     LCD => (APB1R1, lcden, lcdsmen, lcdrst), // 9
 
@@ -263,8 +263,9 @@ bus! {
     // feature = "stm32l4s7",
     feature = "stm32l4r9",
     feature = "stm32l4s9",
-)))]
+    )))]
 bus! {
+    ADC2 => (AHB2, adcen, adcfssmen, adcrst), // 13
     QUADSPI => (AHB3, qspien, qspismen, qspirst), // 8
 }
 
