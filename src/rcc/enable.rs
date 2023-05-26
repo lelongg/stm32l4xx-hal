@@ -211,6 +211,12 @@ bus! {
     TIM17 => (APB2, tim17en, tim17smen, tim17rst), // 18
     SAI2 => (APB2, sai2en, sai2smen, sai2rst), // 22
 }
+#[cfg(any(
+    feature = "stm32l471",
+))]
+bus! {
+    TIM4 => (APB1R1, tim4en, tim4smen, tim4rst),
+}
 
 // L4x1 or L4x2
 #[cfg(any(

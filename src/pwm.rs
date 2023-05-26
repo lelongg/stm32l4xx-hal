@@ -4,10 +4,12 @@ use core::marker::PhantomData;
 use core::mem;
 
 use crate::hal;
-use crate::stm32::{TIM1, TIM15, TIM16, TIM2};
+use crate::stm32::{TIM1, TIM4, TIM15, TIM16, TIM2};
 
 use crate::gpio::gpioa::{PA0, PA1, PA10, PA11, PA15, PA2, PA3, PA8, PA9};
 use crate::gpio::gpiob::{PB10, PB11, PB14, PB3, PB8};
+use crate::gpio::gpiod::PD12;
+use crate::gpio::gpioe::PE9;
 use crate::gpio::Alternate;
 use crate::rcc::{Clocks, Enable, Reset, APB1R1, APB2};
 use crate::time::Hertz;
@@ -52,6 +54,7 @@ pins_to_channels_mapping! {
     TIM1: (PA9), (C2), (1);
     TIM1: (PA10), (C3), (1);
     TIM1: (PA11), (C4), (1);
+    TIM1: (PE9), (C1), (1);
 
     // TIM2
     TIM2: (PA0, PA1, PA2, PA3), (C1, C2, C3, C4), (1, 1, 1, 1);
@@ -91,6 +94,8 @@ pins_to_channels_mapping! {
     TIM2: (PB3), (C2), (1);
     TIM2: (PB10), (C3), (1);
     TIM2: (PB11), (C4), (1);
+
+    TIM4: (PD12), (C1), (1);
 
     // TIM15 - TODO: The uncommented lines are awaiting PAC updates to be valid.
     TIM15: (PB14), (C1), (14);
@@ -161,6 +166,21 @@ impl PwmExt2 for TIM2 {
         //     .modify(|_, w| unsafe { w.tim2_remap().bits(PINS::REMAP) });
 
         tim2(self, _pins, freq, clocks, apb)
+    }
+}
+
+impl PwmExt2 for TIM4 {
+    fn pwm<PINS>(self, _pins: PINS, freq: Hertz, clocks: Clocks, apb: &mut APB1R1) -> PINS::Channels
+    where
+        PINS: Pins<Self>,
+    {
+        // TODO: check if this is really not needed (in the f1xx examples value
+        //       of remap is 0x0). if so, what's afio.mapr on l4xx?
+        //
+        // mapr.mapr()
+        //     .modify(|_, w| unsafe { w.tim2_remap().bits(PINS::REMAP) });
+
+        tim4(self, _pins, freq, clocks, apb)
     }
 }
 
@@ -403,7 +423,8 @@ advanced_timer! {
 
 standard_timer! {
     TIM2: (tim2, APB1R1, u16, u32),
-}
+    TIM4: (tim4, APB1R1, u16, u16),
+ }
 
 small_timer! {
     TIM15: (tim15, APB2, u16, u16),

@@ -36,7 +36,6 @@ use crate::stm32::TIM3;
 use crate::stm32::TIM7;
 use crate::stm32::{TIM15, TIM16, TIM2, TIM6};
 #[cfg(any(
-    // feature = "stm32l471", // missing PAC support
     feature = "stm32l475",
     feature = "stm32l476",
     feature = "stm32l485",
@@ -53,6 +52,10 @@ use crate::stm32::{TIM15, TIM16, TIM2, TIM6};
     feature = "stm32l4s9",
 ))]
 use crate::stm32::{TIM17, TIM4, TIM5};
+#[cfg(any(
+    feature = "stm32l471",
+))]
+use crate::stm32::TIM4;
 
 // TIM1/TIM8 ("Advcanced Control Timers") -> no impl
 // TIM2/TIM3/TIM4/TIM5 ("General Purpose Timers")
@@ -343,4 +346,11 @@ hal! {
     TIM4:  (tim4, free_running_tim4, APB1R1, u16, timclk1),
     TIM5:  (tim5, free_running_tim5, APB1R1, u32, timclk1),
     TIM17: (tim17, free_running_tim17, APB2, u16, timclk2),
+}
+
+#[cfg(any(
+    feature = "stm32l471",
+))]
+hal! {
+    TIM4:  (tim4, free_running_tim4, APB1R1, u16, timclk1),
 }
